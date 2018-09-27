@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chw.dao.ProductMapper">
+
+	<select id="queryProduct" resultMap="productMaap">
+		select * from product where
+		id=#{id}
+	</select>
+
+	<resultMap type="com.chw.bean.Product" id="productMaap">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="price" column="price" />
+		<result property="createtime" column="createtime" />
+		<result property="detail" column="detail" />
+		<collection property="categorys" select="queryCategory"
+			column="id">
+		</collection>
+	</resultMap>
+
+	<select id="queryCategory" resultType="com.chw.bean.Category">
+		select c.* from
+		product_category pc,category c
+		where pc.pid=#{id} and
+		pc.cid=c.id
+	</select>
+
+	<select id="queryAllCategory" resultType="com.chw.bean.Category">
+		select * from category
+	</select>
+
+	<select id="queryProducts" resultMap="productsMap">
+		select * from product
+	</select>
+
+	<resultMap type="com.chw.bean.Product" id="productsMap">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="price" column="price" />
+		<result property="createtime" column="createtime" />
+		<result property="detail" column="detail" />
+		<collection property="categorys" select="queryCategory"
+			column="id"></collection>
+	</resultMap>
+
+	<insert id="insertProduct" useGeneratedKeys="true" keyProperty="id">
+		insert into product
+		(name,price,createtime,detail)
+		values(#{name},#{price},#{createtime},#{detail})
+	</insert>
+
+	<insert id="insertPC">
+		insert into product_category(pid,cid) values
+		<foreach collection="cids" separator="," item="cid">
+			(#{pid},#{cid})
+		</foreach>
+	</insert>
+
+	<delete id="deleteProduct">
+		delete from product where id=#{id}
+	</delete>
+
+	<delete id="deletePC">
+		delete from product_category where pid=#{pid}
+	</delete>
+
+	<update id="updateProduct">
+		update product set
+		name=#{name},price=#{price},createtime=#{createtime},detail=#{detail}
+		where id=#{id}
+	</update>
+
+</mapper>
+
+
